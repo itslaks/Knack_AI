@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KNACK AI</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+        body {
+            background-color: #0c0032;
+            color: #e6e6fa;
+            font-family: 'Orbitron', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+        .header {
+            text-align: center;
+            padding: 40px 0;
+        }
+        .content {
+            display: flex;
+            flex: 1;
+        }
+        .left-panel, .right-panel {
+            flex: 1;
+            padding: 20px;
+            overflow: hidden;
+        }
+        input[type="text"] {
+            padding: 15px;
+            font-size: 18px;
+            margin: 10px 0;
+            background-color: rgba(36, 0, 70, 0.6);
+            color: #e6e6fa;
+            border: 2px solid #5a189a;
+            width: 80%;
+            font-family: 'Orbitron', sans-serif;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            box-shadow: 0 0 15px #5a189a;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        button {
+            padding: 12px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #5a189a;
+            color: #e6e6fa;
+            border: none;
+            margin: 0 10px;
+            font-family: 'Orbitron', sans-serif;
+            transition: all 0.3s ease;
+            border-radius: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        button:hover {
+            background-color: #7b2cbf;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #5a189a;
+        }
+        .output {
+            margin-top: 20px;
+            font-size: 18px;
+            text-align: left;
+            height: calc(100vh - 300px);
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding: 20px;
+            background-color: rgba(36, 0, 70, 0.3);
+            border-radius: 15px;
+        }
+        .output::-webkit-scrollbar {
+            display: none;
+        }
+        .output p {
+            margin: 10px 0;
+        }
+        .iframe-container {
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        iframe {
+            border: none;
+            width: 100%;
+            height: 100%;
+        }
+        .neon-text {
+            font-size: 72px;
+            color: #e6e6fa;
+            text-shadow: 0 0 5px #5a189a, 0 0 10px #5a189a, 0 0 20px #5a189a, 0 0 30px #5a189a, 0 0 40px #5a189a;
+            animation: pulsate 2s infinite alternate;
+            margin-bottom: 20px;
+        }
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(12, 0, 50, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .loading-effect {
+            width: 100px;
+            height: 100px;
+            border: 5px solid transparent;
+            border-top: 5px solid #5a189a;
+            border-radius: 50%;
+            animation: spin 1s linear infinite, glow 2s ease-in-out infinite;
+        }
+        .loading-text {
+            position: absolute;
+            color: #e6e6fa;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px #5a189a, 0 0 10px #5a189a, 0 0 15px #5a189a; }
+            50% { box-shadow: 0 0 20px #5a189a, 0 0 30px #5a189a, 0 0 40px #5a189a; }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        @keyframes pulsate {
+            0% { text-shadow: 0 0 5px #5a189a, 0 0 10px #5a189a, 0 0 20px #5a189a; }
+            100% { text-shadow: 0 0 10px #5a189a, 0 0 20px #5a189a, 0 0 30px #5a189a, 0 0 40px #5a189a; }
+        }
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #0c0032, #190061, #240046, #3c096c);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            z-index: -1;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: float 15s infinite ease-in-out;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-30px) translateX(30px); }
+            50% { transform: translateY(-60px) translateX(-30px); }
+            75% { transform: translateY(-30px) translateX(30px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-animation"></div>
+    <div class="particles" id="particles"></div>
+    <div class="container">
+        <div class="header">
+            <div class="neon-text">KNACK AI</div>
+            <input type="text" id="prompt" placeholder="Enter your prompt here">
+            <div class="button-container">
+                <button onclick="generate('/text')">Text</button>
+                <button onclick="generate('/pic')">Picture</button>
+                <button onclick="generate('/imagine')">Imagine</button>
+            </div>
+        </div>
+        <div class="content">
+            <div class="left-panel">
+                <div class="output" id="output"></div>
+            </div>
+            <div class="right-panel">
+                <div class="iframe-container" id="iframe-container">
+                    <iframe id="iframe" src=""></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="loading" id="loading">
+        <div class="loading-effect"></div>
+        <div class="loading-text">Generating</div>
+    </div>
+
+    <script>
+        function formatOutput(text) {
+            let lines = text.split('\n');
+            let formattedHtml = '';
+
+            lines.forEach((line, index) => {
+                line = line.trim();
+                if (line) {
+                    formattedHtml += `<p>${line}</p>`;
+                }
+            });
+            
+            return formattedHtml;
+        }
+
+        async function generate(command) {
+            const prompt = document.getElementById('prompt').value;
+            document.getElementById('loading').style.display = 'flex';
+
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = '';
+
+            try {
+                if (command === '/text' || command === '/imagine') {
+                    const response = await fetch('/generate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ query: `${command} ${prompt}` })
+                    });
+                    const data = await response.json();
+                    if (data.error) {
+                        outputDiv.innerHTML = `<p>Error: ${data.error}</p>`;
+                    } else {
+                        outputDiv.innerHTML = formatOutput(data.generatedText);
+                    }
+                }
+
+                if (command === '/pic' || command === '/imagine') {
+                    const iframe = document.getElementById('iframe');
+                    iframe.src = `https://lexica.art?q=${encodeURIComponent(prompt)}`;
+                    iframe.onload = () => {
+                        setTimeout(() => {
+                            const scrollHeight = iframe.contentDocument.body.scrollHeight;
+                            iframe.contentWindow.scrollTo(0, scrollHeight * 0.3);
+                        }, 1000);
+                    };
+                }
+            } catch (error) {
+                outputDiv.innerHTML = `<p>Error: ${error.message}</p>`;
+            } finally {
+                setTimeout(() => {
+                    document.getElementById('loading').style.display = 'none';
+                }, 1000);
+            }
+        }
+
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                particle.style.width = `${Math.random() * 5 + 1}px`;
+                particle.style.height = particle.style.width;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                particle.style.animationDuration = `${Math.random() * 10 + 5}s`;
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        createParticles();
+    </script>
+</body>
+</html>
